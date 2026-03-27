@@ -26,6 +26,15 @@ sudo apt install libreoffice zenity
 
 ## Installation
 
+### Via paquet Debian (recommandé)
+
+```bash
+# Télécharger la dernière release depuis GitHub, puis :
+sudo apt install ./docreader_1.0.0.deb
+```
+
+### Via le script d'installation
+
 ```bash
 git clone https://github.com/mendoc/docreader.git
 cd docreader

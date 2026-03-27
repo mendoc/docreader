@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
+# Mettre à jour la base des applications desktop
+update-desktop-database /usr/share/applications/
+
+# Définir docreader comme handler par défaut pour l'utilisateur courant
+REAL_USER="${SUDO_USER:-$USER}"
+if [ -n "$REAL_USER" ] && [ "$REAL_USER" != "root" ]; then
+    sudo -u "$REAL_USER" xdg-mime default docreader.desktop \
+        application/vnd.openxmlformats-officedocument.wordprocessingml.document
+    sudo -u "$REAL_USER" xdg-mime default docreader.desktop \
+        application/msword
+fi
