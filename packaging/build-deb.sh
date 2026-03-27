@@ -13,6 +13,7 @@ echo "Construction du paquet docreader v${VERSION}..."
 mkdir -p "$BUILD_DIR/DEBIAN"
 mkdir -p "$BUILD_DIR/usr/local/bin"
 mkdir -p "$BUILD_DIR/usr/share/applications"
+mkdir -p "$BUILD_DIR/usr/share/icons/hicolor/scalable/apps"
 
 # Fichiers DEBIAN
 cp "$SCRIPT_DIR/DEBIAN/control"  "$BUILD_DIR/DEBIAN/control"
@@ -29,6 +30,9 @@ chmod 755 "$BUILD_DIR/usr/local/bin/docreader"
 
 # Fichier .desktop
 cp "$ROOT_DIR/docreader.desktop" "$BUILD_DIR/usr/share/applications/docreader.desktop"
+
+# Icône
+cp "$ROOT_DIR/docreader.svg" "$BUILD_DIR/usr/share/icons/hicolor/scalable/apps/docreader.svg"
 
 # Construction
 OUTPUT="${ROOT_DIR}/${PKG_NAME}.deb"

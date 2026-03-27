@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-# Mettre à jour la base des applications desktop
+# Mettre à jour la base des applications desktop et le cache des icônes
 update-desktop-database /usr/share/applications/
+gtk-update-icon-cache -f -t /usr/share/icons/hicolor/ 2>/dev/null || true
 
 # Définir docreader comme handler par défaut pour l'utilisateur courant
 REAL_USER="${SUDO_USER:-$USER}"
