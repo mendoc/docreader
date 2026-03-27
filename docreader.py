@@ -10,7 +10,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-VERSION    = "1.3.0"
+VERSION    = "1.3.2"
 CONFIG_DIR = Path.home() / ".config" / "docreader"
 CACHE_DIR  = Path.home() / ".cache"  / "docreader"
 CHECKSUMS  = CONFIG_DIR / "checksums.json"
@@ -115,44 +115,58 @@ def convert_to_pdf(source: Path, file_hash: str) -> Path:
 
 
 def show_about() -> None:
-    text = (
-        f"DocReader  v{VERSION}\n\n"
+    markup = (
+        f'<span size="x-large" weight="bold">DocReader</span>'
+        f'  <span size="large" foreground="gray">v{VERSION}</span>\n'
+        '<span foreground="gray">─────────────────────────────────────</span>\n\n'
+        'Ouvre les fichiers <tt>.doc</tt> et <tt>.docx</tt> par double-clic\n'
+        'en les convertissant en PDF via LibreOffice.\n\n'
+        '<b>Utilisation normale</b>\n'
+        '  Double-cliquez sur un fichier <tt>.doc</tt> ou <tt>.docx</tt>.\n\n'
+        '<b>Ligne de commande</b>\n'
+        '  <tt>docreader &lt;fichier.docx&gt;</tt>  — ouvrir un fichier\n'
+        '  <tt>docreader clear</tt>           — vider le cache\n\n'
+        '<b>Auteur</b>\n'
+        '  Dimitri Ongoua\n'
+        '  <a href="https://github.com/mendoc">github.com/mendoc</a>'
+    )
+    text_fallback = (
+        f"DocReader v{VERSION}\n\n"
         "Ouvre les fichiers .doc et .docx par double-clic\n"
         "en les convertissant en PDF via LibreOffice.\n\n"
-        "Utilisation normale\n"
-        "  Double-cliquez sur un fichier .doc ou .docx.\n\n"
-        "Ligne de commande\n"
-        "  docreader <fichier.docx>  — ouvrir un fichier\n"
-        "  docreader clear           — vider le cache\n\n"
-        "Auteur\n"
-        "  Dimitri Ongoua — github.com/mendoc"
+        "Usage : docreader <fichier.docx>\n"
+        "        docreader clear\n\n"
+        "Auteur : Dimitri Ongoua — https://github.com/mendoc"
     )
     try:
         import gi
-        gi.require_version("Gtk", "4.0")
+        gi.require_version("Gtk", "3.0")
         from gi.repository import Gtk
 
         def on_activate(app):
             win = Gtk.ApplicationWindow(application=app)
             win.set_title("DocReader")
             win.set_resizable(False)
+            win.set_default_size(420, -1)
+            win.set_position(Gtk.WindowPosition.CENTER)
 
-            label = Gtk.Label(label=text)
-            label.set_margin_top(24)
-            label.set_margin_bottom(24)
-            label.set_margin_start(24)
-            label.set_margin_end(24)
+            label = Gtk.Label()
+            label.set_markup(markup)
+            label.set_margin_top(28)
+            label.set_margin_bottom(28)
+            label.set_margin_start(28)
+            label.set_margin_end(28)
             label.set_halign(Gtk.Align.START)
 
-            win.set_child(label)
-            win.present()
+            win.add(label)
+            win.show_all()
 
         app = Gtk.Application(application_id="com.github.mendoc.docreader")
         app.connect("activate", on_activate)
         app.run(None)
 
     except Exception:
-        print(text)
+        print(text_fallback)
 
 
 def clear_cache() -> None:
