@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=DocReader
+Comment=Ouvre les fichiers Word via conversion PDF
+Exec=/usr/local/bin/docreader %f
+Icon=libreoffice-writer
+Terminal=false
+MimeType=application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/msword;
+Categories=Office;
+NoDisplay=false

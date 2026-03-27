@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+"""DocReader — Ouvre les fichiers .doc/.docx via conversion PDF avec cache SHA-256."""
+
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+CONFIG_DIR = Path.home() / ".config" / "docreader"
+CACHE_DIR  = Path.home() / ".cache"  / "docreader"
+CHECKSUMS  = CONFIG_DIR / "checksums.json"
+
+SUPPORTED_EXTENSIONS = {".doc", ".docx"}
+
+
+def show_error(message: str) -> None:
+    if shutil.which("zenity"):
+        subprocess.run(
+            ["zenity", "--error", "--title", "DocReader", "--text", message],
+            check=False,
+        )
+    else:
+        print(f"Erreur : {message}", file=sys.stderr)
+
+
+def sha256_of_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def load_checksums() -> dict:
+    if CHECKSUMS.exists():
+        try:
+            return json.loads(CHECKSUMS.read_text())
+        except (json.JSONDecodeError, OSError):
+            return {}
+    return {}
+
+
+def save_checksums(data: dict) -> None:
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    CHECKSUMS.write_text(json.dumps(data, indent=2))
+
+
+def convert_to_pdf(source: Path, file_hash: str) -> Path:
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+    if not shutil.which("libreoffice"):
+        show_error(
+            "LibreOffice est requis mais n'est pas installé.\n"
+            "Installer avec : sudo apt install libreoffice"
+        )
+        sys.exit(1)
+
+    tmp_dir = tempfile.mkdtemp()
+    zenity_proc = None
+
+    try:
+        tmp_source = Path(tmp_dir) / source.name
+
+        shutil.copy2(source, tmp_source)
+
+        if shutil.which("zenity"):
+            zenity_proc = subprocess.Popen(
+                [
+                    "zenity", "--progress", "--pulsate", "--auto-close",
+                    "--title", "DocReader",
+                    "--text", f"Conversion : {source.name}…",
+                    "--no-cancel",
+                ],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+
+        result = subprocess.run(
+            [
+                "libreoffice", "--headless", "--convert-to", "pdf",
+                "--outdir", tmp_dir, str(tmp_source),
+            ],
+            capture_output=True,
+            text=True,
+        )
+
+        if zenity_proc is not None:
+            zenity_proc.terminate()
+            zenity_proc.wait()
+
+        if result.returncode != 0:
+            show_error(
+                f"Échec de la conversion.\n\n{result.stderr.strip()}"
+            )
+            sys.exit(1)
+
+        tmp_pdf = Path(tmp_dir) / (tmp_source.stem + ".pdf")
+        if not tmp_pdf.exists():
+            show_error("LibreOffice n'a pas produit de fichier PDF.")
+            sys.exit(1)
+
+        dest_pdf = CACHE_DIR / f"{source.stem}_{file_hash[:8]}.pdf"
+        shutil.move(str(tmp_pdf), dest_pdf)
+        return dest_pdf
+
+    finally:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+def main() -> None:
+    if len(sys.argv) < 2:
+        print("Usage : docreader <fichier.doc|fichier.docx>", file=sys.stderr)
+        sys.exit(1)
+
+    source = Path(sys.argv[1])
+
+    if not source.exists():
+        show_error(f"Fichier introuvable :\n{source}")
+        sys.exit(1)
+
+    if source.suffix.lower() not in SUPPORTED_EXTENSIONS:
+        show_error(
+            f"Extension non supportée : {source.suffix}\n"
+            "DocReader accepte uniquement les fichiers .doc et .docx."
+        )
+        sys.exit(1)
+
+    file_hash = sha256_of_file(source)
+    checksums = load_checksums()
+
+    cached_pdf_name = checksums.get(file_hash)
+    if cached_pdf_name:
+        cached_pdf = CACHE_DIR / cached_pdf_name
+        if cached_pdf.exists():
+            subprocess.run(["xdg-open", str(cached_pdf)], check=False)
+            sys.exit(0)
+
+    pdf_path = convert_to_pdf(source, file_hash)
+
+    checksums[file_hash] = f"{source.stem}_{file_hash[:8]}.pdf"
+    save_checksums(checksums)
+
+    subprocess.run(["xdg-open", str(pdf_path)], check=False)
+
+
+if __name__ == "__main__":
+    main()
