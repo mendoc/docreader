@@ -15,25 +15,16 @@ Le cache est basé sur le **contenu** du fichier : renommer ou déplacer un fich
 
 ## Prérequis
 
-```bash
-sudo apt install libreoffice zenity
-```
-
 | Outil | Rôle | Obligatoire |
 |---|---|---|
 | `libreoffice` | Conversion DOCX → PDF | Oui |
 | `zenity` | Fenêtre de progression | Non (dégradation silencieuse) |
 
-## Installation
-
-### Via paquet Debian (recommandé)
-
 ```bash
-# Télécharger la dernière release depuis GitHub, puis :
-sudo apt install ./docreader_1.0.0.deb
+sudo apt install libreoffice zenity
 ```
 
-### Via le script d'installation
+## Installation
 
 ```bash
 git clone https://github.com/mendoc/docreader.git
