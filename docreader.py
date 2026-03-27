@@ -10,7 +10,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-VERSION    = "1.1.0"
+VERSION    = "1.3.0"
 CONFIG_DIR = Path.home() / ".config" / "docreader"
 CACHE_DIR  = Path.home() / ".cache"  / "docreader"
 CHECKSUMS  = CONFIG_DIR / "checksums.json"
@@ -116,35 +116,43 @@ def convert_to_pdf(source: Path, file_hash: str) -> Path:
 
 def show_about() -> None:
     text = (
-        f"<b>DocReader</b>  v{VERSION}\n"
+        f"DocReader  v{VERSION}\n\n"
         "Ouvre les fichiers .doc et .docx par double-clic\n"
-        "en les convertissant en PDF via LibreOffice.\n"
-        "\n"
-        "<b>Utilisation normale</b>\n"
-        "Double-cliquez sur un fichier .doc ou .docx.\n"
-        "\n"
-        "<b>Ligne de commande</b>\n"
-        "<tt>docreader &lt;fichier.docx&gt;</tt>  — ouvrir un fichier\n"
-        "<tt>docreader clear</tt>             — vider le cache\n"
-        "\n"
-        "<b>Auteur</b>\n"
-        "Dimitri Ongoua — github.com/mendoc"
+        "en les convertissant en PDF via LibreOffice.\n\n"
+        "Utilisation normale\n"
+        "  Double-cliquez sur un fichier .doc ou .docx.\n\n"
+        "Ligne de commande\n"
+        "  docreader <fichier.docx>  — ouvrir un fichier\n"
+        "  docreader clear           — vider le cache\n\n"
+        "Auteur\n"
+        "  Dimitri Ongoua — github.com/mendoc"
     )
-    if shutil.which("zenity"):
-        subprocess.run(
-            [
-                "zenity", "--info",
-                "--title", "DocReader",
-                "--text", text,
-                "--width", "400",
-                "--no-wrap",
-            ],
-            check=False,
-        )
-    else:
-        print(f"DocReader v{VERSION}")
-        print("Usage : docreader <fichier.doc|fichier.docx>")
-        print("        docreader clear")
+    try:
+        import gi
+        gi.require_version("Gtk", "4.0")
+        from gi.repository import Gtk
+
+        def on_activate(app):
+            win = Gtk.ApplicationWindow(application=app)
+            win.set_title("DocReader")
+            win.set_resizable(False)
+
+            label = Gtk.Label(label=text)
+            label.set_margin_top(24)
+            label.set_margin_bottom(24)
+            label.set_margin_start(24)
+            label.set_margin_end(24)
+            label.set_halign(Gtk.Align.START)
+
+            win.set_child(label)
+            win.present()
+
+        app = Gtk.Application(application_id="com.github.mendoc.docreader")
+        app.connect("activate", on_activate)
+        app.run(None)
+
+    except Exception:
+        print(text)
 
 
 def clear_cache() -> None:
