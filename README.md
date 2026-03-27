@@ -27,7 +27,7 @@ sudo apt install libreoffice zenity
 ## Installation
 
 ```bash
-git clone https://github.com/dimitriongoua/docreader.git
+git clone https://github.com/mendoc/docreader.git
 cd docreader
 bash install.sh
 ```
@@ -42,10 +42,10 @@ bash uninstall.sh
 
 Les PDFs convertis sont stockés dans `~/.cache/docreader/` sous la forme `<nom>_<hash>.pdf`.
 
-Pour vider manuellement le cache :
+Pour vider le cache :
 
 ```bash
-rm -rf ~/.cache/docreader ~/.config/docreader
+docreader clear
 ```
 
 ## Compatibilité

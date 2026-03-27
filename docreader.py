@@ -113,10 +113,29 @@ def convert_to_pdf(source: Path, file_hash: str) -> Path:
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
+def clear_cache() -> None:
+    removed = 0
+    if CACHE_DIR.exists():
+        shutil.rmtree(CACHE_DIR)
+        removed += 1
+    if CONFIG_DIR.exists():
+        shutil.rmtree(CONFIG_DIR)
+        removed += 1
+    if removed:
+        print("Cache vidé.")
+    else:
+        print("Le cache est déjà vide.")
+
+
 def main() -> None:
     if len(sys.argv) < 2:
         print("Usage : docreader <fichier.doc|fichier.docx>", file=sys.stderr)
+        print("        docreader clear", file=sys.stderr)
         sys.exit(1)
+
+    if sys.argv[1] == "clear":
+        clear_cache()
+        sys.exit(0)
 
     source = Path(sys.argv[1])
 
