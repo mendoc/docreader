@@ -10,6 +10,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+VERSION    = "1.1.0"
 CONFIG_DIR = Path.home() / ".config" / "docreader"
 CACHE_DIR  = Path.home() / ".cache"  / "docreader"
 CHECKSUMS  = CONFIG_DIR / "checksums.json"
@@ -113,6 +114,39 @@ def convert_to_pdf(source: Path, file_hash: str) -> Path:
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
+def show_about() -> None:
+    text = (
+        f"<b>DocReader</b>  v{VERSION}\n"
+        "Ouvre les fichiers .doc et .docx par double-clic\n"
+        "en les convertissant en PDF via LibreOffice.\n"
+        "\n"
+        "<b>Utilisation normale</b>\n"
+        "Double-cliquez sur un fichier .doc ou .docx.\n"
+        "\n"
+        "<b>Ligne de commande</b>\n"
+        "<tt>docreader &lt;fichier.docx&gt;</tt>  — ouvrir un fichier\n"
+        "<tt>docreader clear</tt>             — vider le cache\n"
+        "\n"
+        "<b>Auteur</b>\n"
+        "Dimitri Ongoua — github.com/mendoc"
+    )
+    if shutil.which("zenity"):
+        subprocess.run(
+            [
+                "zenity", "--info",
+                "--title", "DocReader",
+                "--text", text,
+                "--width", "400",
+                "--no-wrap",
+            ],
+            check=False,
+        )
+    else:
+        print(f"DocReader v{VERSION}")
+        print("Usage : docreader <fichier.doc|fichier.docx>")
+        print("        docreader clear")
+
+
 def clear_cache() -> None:
     removed = 0
     if CACHE_DIR.exists():
@@ -129,9 +163,8 @@ def clear_cache() -> None:
 
 def main() -> None:
     if len(sys.argv) < 2:
-        print("Usage : docreader <fichier.doc|fichier.docx>", file=sys.stderr)
-        print("        docreader clear", file=sys.stderr)
-        sys.exit(1)
+        show_about()
+        sys.exit(0)
 
     if sys.argv[1] == "clear":
         clear_cache()
