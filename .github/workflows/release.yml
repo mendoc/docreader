@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build .deb package
+        run: bash packaging/build-deb.sh
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(grep '^Version:' packaging/DEBIAN/control | awk '{print $2}')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "DocReader v${{ steps.version.outputs.version }}"
+          body: |
+            ## Installation
+
+            ```bash
+            sudo apt install ./docreader_${{ steps.version.outputs.version }}.deb
+            ```
+          files: docreader_${{ steps.version.outputs.version }}.deb
