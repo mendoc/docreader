@@ -15,7 +15,7 @@ tar --exclude='.git'      \
     -czf "../${PKG}.orig.tar.gz" .
 
 echo "Construction du paquet source..."
-debuild -S -sa -k C28C5740C72F90B8
+debuild -S -sa -kC28C5740C72F90B8
 
 echo "Upload vers ppa:dimitriongoua/docreader..."
 dput ppa:dimitriongoua/docreader "../${PKG}-1_source.changes"
