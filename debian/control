@@ -1,0 +1,16 @@
+Source: docreader
+Section: utils
+Priority: optional
+Maintainer: Dimitri ONGOUA <ongouadimitri5@gmail.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Homepage: https://github.com/mendoc/docreader
+
+Package: docreader
+Architecture: all
+Depends: python3, xdg-utils, libreoffice, ${misc:Depends}
+Recommends: zenity, python3-gi
+Description: Ouvre les fichiers .doc/.docx via conversion PDF sur Ubuntu GNOME
+ Application légère qui convertit les fichiers Word en PDF via LibreOffice,
+ met le résultat en cache (basé sur le hash SHA-256 du contenu), puis ouvre
+ le PDF dans le lecteur par défaut du système.

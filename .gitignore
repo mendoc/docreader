@@ -1,3 +1,7 @@
 CLAUDE.md
 __pycache__/
 *.deb
+*.orig.tar.gz
+*.changes
+*.dsc
+*.upload

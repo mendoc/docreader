@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -e
+
+REAL_USER="${SUDO_USER:-$USER}"
+if [ -n "$REAL_USER" ] && [ "$REAL_USER" != "root" ]; then
+    MIMEAPPS="$(getent passwd "$REAL_USER" | cut -d: -f6)/.config/mimeapps.list"
+    if [ -f "$MIMEAPPS" ]; then
+        sed -i '/docreader\.desktop/d' "$MIMEAPPS"
+    fi
+
+    echo ""
+    read -r -p "Supprimer le cache et la configuration (~/.cache/docreader, ~/.config/docreader) ? [o/N] " confirm
+    if [[ "$confirm" =~ ^[oOyY]$ ]]; then
+        USER_HOME="$(getent passwd "$REAL_USER" | cut -d: -f6)"
+        rm -rf "$USER_HOME/.cache/docreader"
+        rm -rf "$USER_HOME/.config/docreader"
+        echo "  Cache et configuration supprimés."
+    else
+        echo "  Cache et configuration conservés."
+    fi
+fi
