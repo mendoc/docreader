@@ -1,3 +1,9 @@
+docreader (1.4.0) noble; urgency=medium
+
+  * Add man page (man docreader) with full documentation in French
+
+ -- Dimitri ONGOUA <ongouadimitri5@gmail.com>  Sun, 29 Mar 2026 21:28:21 +0100
+
 docreader (1.3.3) noble; urgency=medium
 
   * Move installation path from /usr/local/bin to /usr/bin (Debian policy)

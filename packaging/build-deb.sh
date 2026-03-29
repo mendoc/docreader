@@ -14,6 +14,7 @@ mkdir -p "$BUILD_DIR/DEBIAN"
 mkdir -p "$BUILD_DIR/usr/bin"
 mkdir -p "$BUILD_DIR/usr/share/applications"
 mkdir -p "$BUILD_DIR/usr/share/icons/hicolor/scalable/apps"
+mkdir -p "$BUILD_DIR/usr/share/man/man1"
 
 # Fichiers DEBIAN
 cp "$SCRIPT_DIR/DEBIAN/control"  "$BUILD_DIR/DEBIAN/control"
@@ -33,6 +34,9 @@ cp "$ROOT_DIR/docreader.desktop" "$BUILD_DIR/usr/share/applications/docreader.de
 
 # Icône
 cp "$ROOT_DIR/docreader.svg" "$BUILD_DIR/usr/share/icons/hicolor/scalable/apps/docreader.svg"
+
+# Man page
+gzip -c "$ROOT_DIR/docreader.1" > "$BUILD_DIR/usr/share/man/man1/docreader.1.gz"
 
 # Construction
 OUTPUT="${ROOT_DIR}/${PKG_NAME}.deb"

@@ -1,0 +1,76 @@
+.TH DOCREADER 1 "2026-03-29" "1.4.0" "Commandes utilisateur"
+.
+.SH NOM
+docreader \- ouvre les fichiers .doc et .docx via conversion PDF
+.
+.SH SYNOPSIS
+.B docreader
+.I fichier
+.br
+.B docreader clear
+.br
+.B docreader
+.
+.SH DESCRIPTION
+.B docreader
+est une application légère pour Ubuntu 24.04 GNOME qui permet d'ouvrir
+les fichiers Microsoft Word (.doc et .docx) par double-clic.
+.PP
+Le fichier est converti en PDF via LibreOffice en mode headless, mis en
+cache localement, puis ouvert dans le lecteur PDF par défaut du système.
+.PP
+Le cache est basé sur le contenu binaire du fichier (hash SHA-256).
+Renommer ou déplacer un fichier ne déclenche pas de nouvelle conversion.
+Seule une modification du contenu provoque une reconversion.
+.
+.SH COMMANDES
+.TP
+.I fichier
+Ouvre le fichier .doc ou .docx spécifié. Si le PDF correspondant est
+présent dans le cache, il est ouvert directement sans conversion.
+.TP
+.B clear
+Vide le cache et la configuration (~/.cache/docreader et
+~/.config/docreader).
+.TP
+(aucun argument)
+Affiche une fenêtre d'information présentant la version, les instructions
+d'utilisation et les crédits de l'auteur.
+.
+.SH FICHIERS
+.TP
+.I ~/.cache/docreader/<nom>_<hash>.pdf
+PDFs convertis, nommés d'après le fichier source avec un suffixe de hash
+SHA-256 pour garantir l'unicité.
+.TP
+.I ~/.config/docreader/checksums.json
+Index des conversions en cache, associant chaque hash SHA-256 au nom du
+fichier PDF correspondant.
+.
+.SH DÉPENDANCES
+.TP
+.B libreoffice
+Requis pour la conversion DOCX/DOC vers PDF.
+.TP
+.B zenity
+Optionnel. Affiche une fenêtre de progression pendant la conversion.
+En l'absence de zenity, la conversion s'effectue silencieusement.
+.TP
+.B xdg-open
+Requis pour ouvrir le PDF dans le lecteur par défaut du système.
+.
+.SH EXEMPLES
+.TP
+Ouvrir un fichier Word :
+.B docreader rapport.docx
+.TP
+Vider le cache :
+.B docreader clear
+.
+.SH AUTEUR
+Dimitri ONGOUA <https://github.com/mendoc>
+.
+.SH VOIR AUSSI
+.BR libreoffice (1),
+.BR xdg-open (1),
+.BR zenity (1)

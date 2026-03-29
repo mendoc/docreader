@@ -10,7 +10,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-VERSION    = "1.3.3"
+VERSION    = "1.4.0"
 CONFIG_DIR = Path.home() / ".config" / "docreader"
 CACHE_DIR  = Path.home() / ".cache"  / "docreader"
 CHECKSUMS  = CONFIG_DIR / "checksums.json"
