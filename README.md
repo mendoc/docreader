@@ -26,6 +26,15 @@ sudo apt install libreoffice zenity
 
 ## Installation
 
+### Via PPA (recommandé)
+
+```bash
+sudo add-apt-repository ppa:dimitriongoua/docreader
+sudo apt install docreader
+```
+
+### Via le dépôt GitHub
+
 ```bash
 git clone https://github.com/mendoc/docreader.git
 cd docreader
@@ -35,7 +44,7 @@ bash install.sh
 ## Désinstallation
 
 ```bash
-bash uninstall.sh
+sudo apt remove docreader
 ```
 
 ## Cache
