@@ -3,6 +3,6 @@
 	dh $@
 
 override_dh_install:
-	install -D -m 755 docreader.py debian/docreader/usr/local/bin/docreader
+	install -D -m 755 docreader.py debian/docreader/usr/bin/docreader
 	install -D -m 644 docreader.desktop debian/docreader/usr/share/applications/docreader.desktop
 	install -D -m 644 docreader.svg debian/docreader/usr/share/icons/hicolor/scalable/apps/docreader.svg

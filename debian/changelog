@@ -1,4 +1,10 @@
-docreader (1.3.2-1) noble; urgency=medium
+docreader (1.3.3) noble; urgency=medium
+
+  * Move installation path from /usr/local/bin to /usr/bin (Debian policy)
+
+ -- Dimitri ONGOUA <ongouadimitri5@gmail.com>  Sun, 29 Mar 2026 00:00:00 +0100
+
+docreader (1.3.2) noble; urgency=medium
 
   * Initial PPA release
 
