@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+#DEBHELPER#
+
 REAL_USER="${SUDO_USER:-$USER}"
 if [ -n "$REAL_USER" ] && [ "$REAL_USER" != "root" ]; then
     MIMEAPPS="$(getent passwd "$REAL_USER" | cut -d: -f6)/.config/mimeapps.list"
